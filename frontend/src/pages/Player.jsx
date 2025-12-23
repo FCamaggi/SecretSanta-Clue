@@ -222,7 +222,6 @@ function Player() {
                       <div className="card-image">
                         <span>👤</span>
                       </div>
-                      <p>{player}</p>
                     </div>
                   ))}
                 </div>
@@ -235,8 +234,6 @@ function Player() {
                     <div className="card-image">
                       <span>📝</span>
                     </div>
-                    <p><strong>{selectedPlayer}</strong></p>
-                    <small>(Siempre eres tú)</small>
                   </div>
                 </div>
               </div>
@@ -257,7 +254,6 @@ function Player() {
                           : w.toLowerCase() 
                       }}>
                       </div>
-                      <p>{w}</p>
                     </div>
                   ))}
                 </div>
@@ -275,7 +271,6 @@ function Player() {
                         borderRadius: '4px'
                       }}></div>
                     </div>
-                    <p><strong>{assignedRibbon}</strong></p>
                   </div>
                 </div>
               </div>
