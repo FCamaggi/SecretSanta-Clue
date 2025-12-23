@@ -4,8 +4,23 @@ import io from 'socket.io-client'
 import './Player.css'
 
 const PLAYERS = ['Mamá', 'Papá', 'Fay', 'Fio', 'Tato', 'Raffa']
-const WRAPPERS = ['Rojo', 'Verde', 'Azul', 'Dorado', 'Plateado', 'Multicolor']
+const WRAPPERS = ['Regalo 1', 'Regalo 2', 'Regalo 3', 'Regalo 4', 'Regalo 5', 'Regalo 6']
 const RIBBONS = ['Roja', 'Verde', 'Azul', 'Dorada', 'Plateada', 'Blanca']
+
+// Helper para obtener la ruta de la imagen de una carta
+const getCardImage = (type, value) => {
+  const normalizedValue = value.toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // Remover tildes
+    .replace(/\s+/g, '-') // Reemplazar espacios con guiones
+  
+  const typeFolder = {
+    player: 'players',
+    wrapper: 'wrappers',
+    ribbon: 'ribbons'
+  }[type]
+  
+  return `/cards/${typeFolder}/${normalizedValue}.png`
+}
 
 function Player() {
   const { gameCode } = useParams()
@@ -219,8 +234,19 @@ function Player() {
                       className={`card-option ${recipient === player ? 'selected' : ''}`}
                       onClick={() => setRecipient(player)}
                     >
-                      <div className="card-image">
-                        <span>👤</span>
+                      <div className="card-image-wrapper">
+                        <img 
+                          src={getCardImage('player', player)} 
+                          alt={player}
+                          className="card-img"
+                          onError={(e) => {
+                            e.target.style.display = 'none'
+                            e.target.nextSibling.style.display = 'flex'
+                          }}
+                        />
+                        <div className="card-image" style={{display: 'none'}}>
+                          <span>👤</span>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -231,16 +257,26 @@ function Player() {
                 <h4>Tu carta de remitente:</h4>
                 <div className="secret-friend-display">
                   <div className="card-option selected">
-                    <div className="card-image">
-                      <span>📝</span>
+                    <div className="card-image-wrapper">
+                      <img 
+                        src={getCardImage('player', selectedPlayer)} 
+                        alt={selectedPlayer}
+                        className="card-img"
+                        onError={(e) => {
+                          e.target.style.display = 'none'
+                          e.target.nextSibling.style.display = 'flex'
+                        }}
+                      />
+                      <div className="card-image" style={{display: 'none'}}>
+                        <span>📝</span>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
 
               <div className="form-section">
-                <h4>Tu carta de envoltorio:</h4>
-                <p style={{color: '#f5deb3', fontSize: '0.9rem', marginBottom: '15px'}}>Placeholder - Se reemplazará con fotos de regalos</p>
+                <h4>Tu carta de regalo:</h4>
                 <div className="card-grid">
                   {WRAPPERS.map(w => (
                     <div 
@@ -248,11 +284,21 @@ function Player() {
                       className={`card-option ${wrapperCard === w ? 'selected' : ''}`}
                       onClick={() => setWrapperCard(w)}
                     >
-                      <div className="card-image" style={{ 
-                        background: w.toLowerCase() === 'multicolor' 
-                          ? 'linear-gradient(45deg, red, yellow, green, blue)' 
-                          : w.toLowerCase() 
-                      }}>
+                      <div className="card-image-wrapper">
+                        <img 
+                          src={getCardImage('wrapper', w)} 
+                          alt={w}
+                          className="card-img"
+                          onError={(e) => {
+                            e.target.style.display = 'none'
+                            e.target.nextSibling.style.display = 'flex'
+                          }}
+                        />
+                        <div className="card-image" style={{ 
+                          display: 'none'
+                        }}>
+                          <span>🎁</span>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -263,13 +309,24 @@ function Player() {
                 <h4>Tu cinta asignada:</h4>
                 <div className="secret-friend-display">
                   <div className="card-option selected">
-                    <div className="card-image">
-                      <div style={{
-                        width: '80%',
-                        height: '8px',
-                        background: assignedRibbon.toLowerCase(),
-                        borderRadius: '4px'
-                      }}></div>
+                    <div className="card-image-wrapper">
+                      <img 
+                        src={getCardImage('ribbon', assignedRibbon)} 
+                        alt={assignedRibbon}
+                        className="card-img"
+                        onError={(e) => {
+                          e.target.style.display = 'none'
+                          e.target.nextSibling.style.display = 'flex'
+                        }}
+                      />
+                      <div className="card-image" style={{display: 'none'}}>
+                        <div style={{
+                          width: '80%',
+                          height: '8px',
+                          background: assignedRibbon.toLowerCase(),
+                          borderRadius: '4px'
+                        }}></div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -323,40 +380,49 @@ function Player() {
                         <p>Incógnita</p>
                       </div>
                     </div>
-                  ) : card.type === 'sender' ? (
-                    <div className="card-display sender">
-                      <div className="card-display-content">
-                        <span className="card-icon">📝</span>
-                        <p className="card-type">Remitente</p>
-                        <p className="card-value">{card.value}</p>
+                  ) : (
+                    <div className="card-display">
+                      <img 
+                        src={getCardImage(
+                          card.type === 'sender' ? 'player' : card.type,
+                          card.value
+                        )} 
+                        alt={card.value}
+                        className="card-display-img"
+                        onError={(e) => {
+                          e.target.style.display = 'none'
+                          e.target.nextSibling.style.display = 'flex'
+                        }}
+                      />
+                      <div className="card-display-fallback" style={{display: 'none'}}>
+                        {card.type === 'sender' ? (
+                          <div className="card-display-content">
+                            <span className="card-icon">📝</span>
+                            <p className="card-type">Remitente</p>
+                            <p className="card-value">{card.value}</p>
+                          </div>
+                        ) : card.type === 'wrapper' ? (
+                          <div className="card-display-content">
+                            <span className="card-icon">🎁</span>
+                            <p className="card-type">Regalo</p>
+                            <p className="card-value">{card.value}</p>
+                          </div>
+                        ) : card.type === 'ribbon' ? (
+                          <div className="card-display-content">
+                            <div style={{
+                              width: '80%',
+                              height: '12px',
+                              background: card.value.toLowerCase(),
+                              borderRadius: '6px',
+                              margin: '10px auto'
+                            }}></div>
+                            <p className="card-type">Cinta</p>
+                            <p className="card-value">{card.value}</p>
+                          </div>
+                        ) : null}
                       </div>
                     </div>
-                  ) : card.type === 'wrapper' ? (
-                    <div className="card-display wrapper" style={{
-                      background: card.value.toLowerCase() === 'multicolor' 
-                        ? 'linear-gradient(135deg, red, yellow, green, blue)' 
-                        : card.value.toLowerCase()
-                    }}>
-                      <div className="card-display-content">
-                        <p className="card-type">Envoltorio</p>
-                        <p className="card-value">{card.value}</p>
-                      </div>
-                    </div>
-                  ) : card.type === 'ribbon' ? (
-                    <div className="card-display ribbon">
-                      <div className="card-display-content">
-                        <div style={{
-                          width: '80%',
-                          height: '12px',
-                          background: card.value.toLowerCase(),
-                          borderRadius: '6px',
-                          margin: '10px auto'
-                        }}></div>
-                        <p className="card-type">Cinta</p>
-                        <p className="card-value">{card.value}</p>
-                      </div>
-                    </div>
-                  ) : null}
+                  )}
                 </div>
               ))}
             </div>

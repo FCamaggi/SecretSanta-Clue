@@ -215,7 +215,12 @@ function CardCreator() {
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
-    link.download = `carta-${card.title.replace(/\s+/g, '-').toLowerCase()}.png`
+    // Normalizar nombre: sin tildes, espacios a guiones, minúsculas
+    const normalizedName = card.title
+      .toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // Remover tildes
+      .replace(/\s+/g, '-') // Espacios a guiones
+    link.download = `${normalizedName}.png`
     link.click()
     URL.revokeObjectURL(url)
   }
