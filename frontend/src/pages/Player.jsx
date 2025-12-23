@@ -32,7 +32,7 @@ function Player() {
   const [currentSuspicion, setCurrentSuspicion] = useState(null)
 
   useEffect(() => {
-    const newSocket = io('http://localhost:3001')
+    const newSocket = io(import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001')
     setSocket(newSocket)
 
     newSocket.emit('join-player', gameCode)

@@ -143,7 +143,7 @@ function Board() {
   const [positions, setPositions] = useState(initialPositions)
 
   useEffect(() => {
-    const newSocket = io('http://localhost:3001')
+    const newSocket = io(import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001')
     setSocket(newSocket)
 
     newSocket.emit('join-board', gameCode)
