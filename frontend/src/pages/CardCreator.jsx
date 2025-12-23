@@ -48,43 +48,159 @@ function CardCreator() {
       
       const img = new Image()
       img.onload = () => {
-        // Fondo blanco
-        ctx.fillStyle = '#ffffff'
+        // === FONDO DEGRADADO ELEGANTE ===
+        const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height)
+        gradient.addColorStop(0, '#1a1a2e')
+        gradient.addColorStop(1, '#16213e')
+        ctx.fillStyle = gradient
         ctx.fillRect(0, 0, canvas.width, canvas.height)
         
-        // Dibujar imagen centrada
+        // === MARCO DECORATIVO DORADO ===
+        const borderWidth = 30
+        const innerBorder = 10
+        
+        // Marco exterior dorado
+        ctx.strokeStyle = '#daa520'
+        ctx.lineWidth = borderWidth
+        ctx.strokeRect(borderWidth / 2, borderWidth / 2, 
+                       canvas.width - borderWidth, canvas.height - borderWidth)
+        
+        // Marco interior café oscuro
+        ctx.strokeStyle = '#8b4513'
+        ctx.lineWidth = 8
+        ctx.strokeRect(borderWidth + innerBorder, borderWidth + innerBorder,
+                       canvas.width - (borderWidth + innerBorder) * 2, 
+                       canvas.height - (borderWidth + innerBorder) * 2)
+        
+        // === ORNAMENTOS EN LAS ESQUINAS ===
+        const drawCornerOrnament = (x, y, rotation) => {
+          ctx.save()
+          ctx.translate(x, y)
+          ctx.rotate(rotation * Math.PI / 180)
+          ctx.strokeStyle = '#daa520'
+          ctx.lineWidth = 3
+          ctx.beginPath()
+          ctx.arc(0, 0, 15, 0, Math.PI / 2)
+          ctx.stroke()
+          ctx.beginPath()
+          ctx.arc(0, 0, 10, 0, Math.PI / 2)
+          ctx.stroke()
+          ctx.restore()
+        }
+        
+        drawCornerOrnament(50, 50, 0)           // Superior izquierda
+        drawCornerOrnament(canvas.width - 50, 50, 90)  // Superior derecha
+        drawCornerOrnament(50, canvas.height - 50, 270) // Inferior izquierda
+        drawCornerOrnament(canvas.width - 50, canvas.height - 50, 180) // Inferior derecha
+        
+        // === ÁREA DE IMAGEN CON MARCO ===
+        const imageMargin = 80
+        const imageAreaY = 120
+        const imageAreaHeight = 600
+        const imageAreaWidth = canvas.width - imageMargin * 2
+        
+        // Fondo para la imagen
+        ctx.fillStyle = '#0f0f1e'
+        ctx.fillRect(imageMargin, imageAreaY, imageAreaWidth, imageAreaHeight)
+        
+        // Marco dorado alrededor de la imagen
+        ctx.strokeStyle = '#daa520'
+        ctx.lineWidth = 4
+        ctx.strokeRect(imageMargin, imageAreaY, imageAreaWidth, imageAreaHeight)
+        
+        // Dibujar imagen centrada y con clip
+        ctx.save()
+        ctx.beginPath()
+        ctx.rect(imageMargin + 5, imageAreaY + 5, imageAreaWidth - 10, imageAreaHeight - 10)
+        ctx.clip()
+        
         const imgAspect = img.width / img.height
-        const canvasAspect = canvas.width / canvas.height
+        const areaAspect = imageAreaWidth / imageAreaHeight
         let drawWidth, drawHeight, offsetX, offsetY
         
-        if (imgAspect > canvasAspect) {
-          drawWidth = canvas.width
-          drawHeight = canvas.width / imgAspect
-          offsetX = 0
-          offsetY = (canvas.height - drawHeight) / 2
-        } else {
-          drawHeight = canvas.height * 0.7
+        if (imgAspect > areaAspect) {
+          drawHeight = imageAreaHeight - 10
           drawWidth = drawHeight * imgAspect
-          offsetX = (canvas.width - drawWidth) / 2
-          offsetY = 50
+          offsetX = imageMargin + (imageAreaWidth - drawWidth) / 2
+          offsetY = imageAreaY + 5
+        } else {
+          drawWidth = imageAreaWidth - 10
+          drawHeight = drawWidth / imgAspect
+          offsetX = imageMargin + 5
+          offsetY = imageAreaY + (imageAreaHeight - drawHeight) / 2
         }
         
         ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight)
+        ctx.restore()
         
-        // Texto del título
-        ctx.fillStyle = '#1a1a2e'
-        ctx.font = 'bold 48px "Playfair Display", serif'
-        ctx.textAlign = 'center'
-        ctx.fillText(card.title, canvas.width / 2, canvas.height - 100)
-        
-        // Badge del tipo
+        // === ICONO DEL TIPO ===
         const typeEmoji = {
           sender: '👤',
           wrapper: '🎁',
           ribbon: '🎀'
         }
-        ctx.font = '60px Arial'
-        ctx.fillText(typeEmoji[card.type], canvas.width / 2, canvas.height - 30)
+        const typeLabels = {
+          sender: 'JUGADOR',
+          wrapper: 'ENVOLTORIO',
+          ribbon: 'CINTA'
+        }
+        
+        // Fondo para el icono
+        ctx.fillStyle = '#daa520'
+        ctx.beginPath()
+        ctx.arc(canvas.width / 2, 770, 40, 0, Math.PI * 2)
+        ctx.fill()
+        
+        // Borde del círculo
+        ctx.strokeStyle = '#8b4513'
+        ctx.lineWidth = 4
+        ctx.stroke()
+        
+        // Emoji
+        ctx.font = '50px Arial'
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'middle'
+        ctx.fillStyle = '#1a1a2e'
+        ctx.fillText(typeEmoji[card.type], canvas.width / 2, 770)
+        
+        // === ETIQUETA DE TIPO ===
+        ctx.font = 'bold 24px "Playfair Display", serif'
+        ctx.fillStyle = '#daa520'
+        ctx.textAlign = 'center'
+        ctx.fillText(typeLabels[card.type], canvas.width / 2, 850)
+        
+        // === TÍTULO DE LA CARTA ===
+        ctx.font = 'bold 56px "Playfair Display", serif'
+        ctx.fillStyle = '#f5deb3'
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'middle'
+        
+        // Sombra del texto
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.8)'
+        ctx.shadowBlur = 10
+        ctx.shadowOffsetX = 3
+        ctx.shadowOffsetY = 3
+        
+        // Ajustar tamaño de fuente si el título es muy largo
+        const maxWidth = canvas.width - 120
+        let fontSize = 56
+        ctx.font = `bold ${fontSize}px "Playfair Display", serif`
+        while (ctx.measureText(card.title).width > maxWidth && fontSize > 30) {
+          fontSize -= 2
+          ctx.font = `bold ${fontSize}px "Playfair Display", serif`
+        }
+        
+        ctx.fillText(card.title, canvas.width / 2, 930)
+        
+        // Línea decorativa bajo el título
+        ctx.shadowColor = 'transparent'
+        ctx.strokeStyle = '#daa520'
+        ctx.lineWidth = 3
+        ctx.beginPath()
+        const lineWidth = 200
+        ctx.moveTo(canvas.width / 2 - lineWidth / 2, 970)
+        ctx.lineTo(canvas.width / 2 + lineWidth / 2, 970)
+        ctx.stroke()
         
         canvas.toBlob((blob) => {
           resolve(blob)
