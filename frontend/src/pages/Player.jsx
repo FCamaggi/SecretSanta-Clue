@@ -484,8 +484,19 @@ function Player() {
                     className={`card-option ${selectedCards.some(c => c.type === 'sender') ? 'selected' : ''}`}
                     onClick={() => toggleCardSelection('sender', myEnvelope.cards.sender)}
                   >
-                    <div className="card-image">
-                      <span>📝</span>
+                    <div className="card-image-wrapper">
+                      <img 
+                        src={getCardImage('player', myEnvelope.cards.sender)} 
+                        alt={myEnvelope.cards.sender}
+                        className="card-img"
+                        onError={(e) => {
+                          e.target.style.display = 'none'
+                          e.target.nextSibling.style.display = 'flex'
+                        }}
+                      />
+                      <div className="card-image" style={{display: 'none'}}>
+                        <span>📝</span>
+                      </div>
                     </div>
                     <p>Remitente</p>
                     <small>{myEnvelope.cards.sender}</small>
@@ -495,13 +506,21 @@ function Player() {
                     className={`card-option ${selectedCards.some(c => c.type === 'wrapper') ? 'selected' : ''}`}
                     onClick={() => toggleCardSelection('wrapper', myEnvelope.cards.wrapper)}
                   >
-                    <div className="card-image" style={{
-                      background: myEnvelope.cards.wrapper.toLowerCase() === 'multicolor' 
-                        ? 'linear-gradient(45deg, red, yellow, green, blue)' 
-                        : myEnvelope.cards.wrapper.toLowerCase()
-                    }}>
+                    <div className="card-image-wrapper">
+                      <img 
+                        src={getCardImage('wrapper', myEnvelope.cards.wrapper)} 
+                        alt={myEnvelope.cards.wrapper}
+                        className="card-img"
+                        onError={(e) => {
+                          e.target.style.display = 'none'
+                          e.target.nextSibling.style.display = 'flex'
+                        }}
+                      />
+                      <div className="card-image" style={{display: 'none'}}>
+                        <span>🎁</span>
+                      </div>
                     </div>
-                    <p>Envoltorio</p>
+                    <p>Regalo</p>
                     <small>{myEnvelope.cards.wrapper}</small>
                   </div>
 
@@ -509,13 +528,24 @@ function Player() {
                     className={`card-option ${selectedCards.some(c => c.type === 'ribbon') ? 'selected' : ''}`}
                     onClick={() => toggleCardSelection('ribbon', myEnvelope.cards.ribbon)}
                   >
-                    <div className="card-image">
-                      <div style={{
-                        width: '80%',
-                        height: '8px',
-                        background: myEnvelope.cards.ribbon.toLowerCase(),
-                        borderRadius: '4px'
-                      }}></div>
+                    <div className="card-image-wrapper">
+                      <img 
+                        src={getCardImage('ribbon', myEnvelope.cards.ribbon)} 
+                        alt={myEnvelope.cards.ribbon}
+                        className="card-img"
+                        onError={(e) => {
+                          e.target.style.display = 'none'
+                          e.target.nextSibling.style.display = 'flex'
+                        }}
+                      />
+                      <div className="card-image" style={{display: 'none'}}>
+                        <div style={{
+                          width: '80%',
+                          height: '8px',
+                          background: myEnvelope.cards.ribbon.toLowerCase(),
+                          borderRadius: '4px'
+                        }}></div>
+                      </div>
                     </div>
                     <p>Cinta</p>
                     <small>{myEnvelope.cards.ribbon}</small>
