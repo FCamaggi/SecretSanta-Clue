@@ -11,4 +11,3 @@
 
 [build.environment]
   NODE_VERSION = "18"
-  VITE_BACKEND_URL = "${BACKEND_URL}"
