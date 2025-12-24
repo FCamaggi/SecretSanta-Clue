@@ -64,41 +64,49 @@ Secret Santa Clue/
 ### ✅ Funcionalidades Principales
 
 1. **Sistema de Creación de Partidas**
+
    - Generación de códigos únicos de 6 caracteres
    - Unión por código para hasta 6 jugadores
 
 2. **Selección de Jugadores**
+
    - Dropdown con 6 personajes (Mamá, Papá, Fay, Fio, Tato, Raffa)
    - Validación de personajes únicos
 
 3. **Armado de Sobres Secretos**
+
    - Selección visual de Amigo Secreto
    - Selección de Envoltorio (6 colores)
    - Selección de Cinta (6 colores)
    - Confirmación individual
 
 4. **Reparto Automático de Sobres**
+
    - Algoritmo que NUNCA asigna el propio sobre
    - Se activa cuando los 6 jugadores confirman
 
 5. **Tablero Interactivo Drag & Drop**
+
    - Movimiento de fichas de colores
    - Dado clickeable con números aleatorios
    - Sincronización en tiempo real
    - Imagen de fondo personalizable
 
 6. **Sistema de Sospechas**
+
    - Notificación push a jugadores relevantes
    - Modo "Armar Sospecha" (mostrar coincidencias)
    - Modo "Ocultar Verdad" (mostrar incógnitas)
    - Lógica de respuesta secuencial
 
 7. **Sistema de Acusaciones**
+
    - Verificación automática de respuestas
    - Revelación de sobres
    - Sistema de ganadores
 
 8. **Creador de Cartas Personalizadas**
+
    - Upload de imágenes
    - Títulos personalizados
    - Exportación a JSON
@@ -112,6 +120,7 @@ Secret Santa Clue/
 ### 🔗 Tecnologías Utilizadas
 
 **Frontend:**
+
 - React 18
 - React Router DOM (navegación)
 - React DnD + HTML5 Backend (drag & drop)
@@ -119,6 +128,7 @@ Secret Santa Clue/
 - Vite (build tool)
 
 **Backend:**
+
 - Node.js
 - Express (API REST)
 - Socket.io (WebSocket)
@@ -152,6 +162,7 @@ copy .env.example .env
 ### Agregar Imagen del Tablero
 
 ⚠️ **IMPORTANTE:** Copia tu imagen `tablero.jpg` a:
+
 ```
 frontend/public/tablero.jpg
 ```
@@ -159,12 +170,14 @@ frontend/public/tablero.jpg
 ### Ejecutar
 
 **Terminal 1 - Backend:**
+
 ```powershell
 cd backend
 npm run dev
 ```
 
 **Terminal 2 - Frontend:**
+
 ```powershell
 cd frontend
 npm run dev
@@ -177,11 +190,13 @@ Abre: `http://localhost:3000`
 ## 📱 Uso Durante el Evento
 
 ### Servidor Principal (Computadora)
+
 - Ejecuta backend y frontend
 - Muestra el tablero en pantalla grande
 - URL: `http://localhost:3000/board/CODIGO`
 
 ### Jugadores (Móviles/Tablets)
+
 - Obtén IP del servidor: `ipconfig`
 - Los jugadores acceden: `http://TU-IP:3000`
 - Ingresan código y seleccionan personaje
@@ -213,15 +228,18 @@ Abre: `http://localhost:3000`
 ## 🎁 Materiales Físicos Necesarios
 
 1. **Regalos:**
+
    - 6 regalos envueltos
    - Identificables por color de papel
    - SIN cintas puestas al inicio
 
 2. **Cintas Reales:**
-   - Roja, Verde, Azul, Dorada, Plateada, Blanca
+
+   - Roja, Verde, Azul, Dorada, Plateada, Rosa
    - Guardadas por el remitente
 
 3. **Tecnología:**
+
    - 1 Computadora (servidor)
    - 1 Pantalla grande (TV/Proyector)
    - 6 Dispositivos móviles
@@ -238,12 +256,15 @@ Abre: `http://localhost:3000`
 Si quieres personalizar:
 
 1. **Colores de Fichas:**
+
    - Edita `PLAYER_COLORS` en `Board.jsx`
 
 2. **Nombres de Jugadores:**
+
    - Edita array `PLAYERS` en componentes
 
 3. **Colores de Envoltorios/Cintas:**
+
    - Edita `WRAPPERS` y `RIBBONS` en `Player.jsx`
 
 4. **Estilos:**
@@ -254,6 +275,7 @@ Si quieres personalizar:
 ## 🚀 Deployment (Opcional)
 
 ### Frontend en Netlify
+
 ```bash
 cd frontend
 npm run build
@@ -261,6 +283,7 @@ netlify deploy --prod
 ```
 
 ### Backend en Render
+
 1. Sube el código a GitHub
 2. Conecta con Render
 3. Configura variables de entorno
@@ -272,6 +295,7 @@ netlify deploy --prod
 ## 📞 Soporte
 
 Si algo no funciona:
+
 1. Revisa **TROUBLESHOOTING.md**
 2. Verifica consola del navegador (F12)
 3. Verifica terminal del backend
@@ -281,9 +305,10 @@ Si algo no funciona:
 
 ## 🎉 Conclusión
 
-El proyecto está **100% funcional** y listo para tu evento navideño. 
+El proyecto está **100% funcional** y listo para tu evento navideño.
 
 ### Próximos Pasos:
+
 1. Ejecuta `.\install.ps1`
 2. Agrega `tablero.jpg`
 3. Prueba con 2-3 dispositivos

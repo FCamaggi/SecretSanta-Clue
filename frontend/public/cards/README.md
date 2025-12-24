@@ -14,6 +14,7 @@ cards/
 ## Nombres de archivo requeridos:
 
 ### Jugadores (players/):
+
 - mama.png
 - papa.png
 - fay.png
@@ -22,6 +23,7 @@ cards/
 - raffa.png
 
 ### Regalos (wrappers/):
+
 - regalo-1.png
 - regalo-2.png
 - regalo-3.png
@@ -30,12 +32,13 @@ cards/
 - regalo-6.png
 
 ### Cintas (ribbons/):
+
 - roja.png
 - verde.png
 - azul.png
 - dorada.png
 - plateada.png
-- blanca.png
+- Rosa.png
 
 ## Instrucciones:
 

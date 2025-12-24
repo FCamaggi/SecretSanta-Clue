@@ -21,9 +21,7 @@
   font-family: 'Playfair Display', serif;
   color: #daa520;
   margin-bottom: 20px;
-  text-shadow: 
-    0 0 20px rgba(218, 165, 32, 0.5),
-    0 2px 8px rgba(0, 0, 0, 0.6);
+  text-shadow: 0 0 20px rgba(218, 165, 32, 0.5), 0 2px 8px rgba(0, 0, 0, 0.6);
   letter-spacing: 2px;
   /* Prevenir desbordamiento de texto largo */
   word-wrap: break-word;
@@ -75,14 +73,17 @@
 }
 
 .card-option {
-  background: linear-gradient(135deg, rgba(139, 69, 19, 0.15), rgba(101, 67, 33, 0.15));
+  background: linear-gradient(
+    135deg,
+    rgba(139, 69, 19, 0.15),
+    rgba(101, 67, 33, 0.15)
+  );
   border: 3px solid rgba(218, 165, 32, 0.3);
   border-radius: 12px;
   padding: 15px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 
-    0 4px 8px rgba(0, 0, 0, 0.3),
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3),
     inset 0 1px 2px rgba(255, 255, 255, 0.1);
   position: relative;
   overflow: hidden;
@@ -95,17 +96,24 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(218, 165, 32, 0.2), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(218, 165, 32, 0.2),
+    transparent
+  );
   transition: left 0.4s ease;
 }
 
 .card-option:hover {
   transform: translateY(-5px) scale(1.02);
-  background: linear-gradient(135deg, rgba(139, 69, 19, 0.25), rgba(101, 67, 33, 0.25));
+  background: linear-gradient(
+    135deg,
+    rgba(139, 69, 19, 0.25),
+    rgba(101, 67, 33, 0.25)
+  );
   border-color: rgba(218, 165, 32, 0.5);
-  box-shadow: 
-    0 8px 16px rgba(0, 0, 0, 0.4),
-    0 0 20px rgba(218, 165, 32, 0.2),
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4), 0 0 20px rgba(218, 165, 32, 0.2),
     inset 0 1px 2px rgba(255, 255, 255, 0.15);
 }
 
@@ -115,10 +123,12 @@
 
 .card-option.selected {
   border-color: #daa520;
-  background: linear-gradient(135deg, rgba(218, 165, 32, 0.3), rgba(184, 134, 11, 0.3));
-  box-shadow: 
-    0 8px 16px rgba(0, 0, 0, 0.5),
-    0 0 30px rgba(218, 165, 32, 0.5),
+  background: linear-gradient(
+    135deg,
+    rgba(218, 165, 32, 0.3),
+    rgba(184, 134, 11, 0.3)
+  );
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5), 0 0 30px rgba(218, 165, 32, 0.5),
     inset 0 0 20px rgba(218, 165, 32, 0.2);
   transform: translateY(-3px) scale(1.05);
 }
@@ -244,15 +254,17 @@
 }
 
 .suspicion-trigger {
-  background: linear-gradient(135deg, rgba(255, 152, 0, 0.15), rgba(255, 193, 7, 0.15));
+  background: linear-gradient(
+    135deg,
+    rgba(255, 152, 0, 0.15),
+    rgba(255, 193, 7, 0.15)
+  );
   border: 3px solid #ff9800;
   border-radius: 12px;
   padding: 25px;
   margin: 30px 0;
   text-align: center;
-  box-shadow: 
-    0 4px 12px rgba(0, 0, 0, 0.3),
-    0 0 20px rgba(255, 152, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 152, 0, 0.2);
 }
 
 .suspicion-trigger h4 {
@@ -276,27 +288,158 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
-    box-shadow: 
-      0 4px 12px rgba(0, 0, 0, 0.4),
-      0 0 20px rgba(255, 152, 0, 0.3);
+  0%,
+  100% {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 152, 0, 0.3);
   }
   50% {
-    box-shadow: 
-      0 6px 16px rgba(0, 0, 0, 0.5),
-      0 0 30px rgba(255, 152, 0, 0.5);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5), 0 0 30px rgba(255, 152, 0, 0.5);
   }
 }
 
 .btn-secondary {
-  background: linear-gradient(135deg, rgba(139, 69, 19, 0.3), rgba(101, 67, 33, 0.3)) !important;
+  background: linear-gradient(
+    135deg,
+    rgba(139, 69, 19, 0.3),
+    rgba(101, 67, 33, 0.3)
+  ) !important;
   border-color: rgba(218, 165, 32, 0.4) !important;
   color: #d2b48c !important;
   margin-top: 10px;
 }
 
+/* Hoja de Deducción */
+.deduction-section {
+  background: linear-gradient(
+    135deg,
+    rgba(76, 175, 80, 0.15),
+    rgba(139, 195, 74, 0.15)
+  );
+  border: 3px solid #4caf50;
+  border-radius: 12px;
+  padding: 25px;
+  margin: 30px 0;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 0 20px rgba(76, 175, 80, 0.2);
+}
+
+.deduction-section h4 {
+  color: #81c784;
+  font-family: 'Crimson Text', serif;
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.deduction-section p {
+  color: #f5deb3;
+  margin-bottom: 20px;
+  font-size: 1.1rem;
+}
+
+.deduction-sheet {
+  margin-top: 25px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  padding: 20px;
+  overflow-x: auto;
+}
+
+.deduction-legend {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  padding: 15px;
+  background: rgba(218, 165, 32, 0.1);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #f5deb3;
+}
+
+.deduction-legend strong {
+  color: #daa520;
+}
+
+.deduction-table {
+  margin: 30px 0;
+}
+
+.deduction-table h5 {
+  color: #daa520;
+  font-family: 'Playfair Display', serif;
+  margin-bottom: 15px;
+  font-size: 1.3rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.deduction-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: rgba(218, 165, 32, 0.2);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.deduction-header,
+.deduction-row {
+  display: grid;
+  grid-template-columns: 120px repeat(6, 1fr);
+  gap: 2px;
+}
+
+.deduction-cell {
+  background: rgba(26, 26, 46, 0.8);
+  padding: 12px 8px;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  color: #f5deb3;
+  transition: all 0.2s ease;
+}
+
+.deduction-cell.header-cell {
+  background: rgba(139, 69, 19, 0.5);
+  color: #daa520;
+  font-weight: bold;
+  font-family: 'Crimson Text', serif;
+  font-size: 0.85rem;
+}
+
+.deduction-cell.item-cell {
+  background: rgba(139, 69, 19, 0.3);
+  color: #f5deb3;
+  font-weight: 600;
+  text-align: left;
+  justify-content: flex-start;
+  padding-left: 12px;
+}
+
+.deduction-cell.clickable {
+  cursor: pointer;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.deduction-cell.clickable:hover {
+  background: rgba(218, 165, 32, 0.3);
+  transform: scale(1.05);
+}
+
+.deduction-cell.clickable:active {
+  transform: scale(0.95);
+}
+
 .btn-secondary:hover {
-  background: linear-gradient(135deg, rgba(139, 69, 19, 0.4), rgba(101, 67, 33, 0.4)) !important;
+  background: linear-gradient(
+    135deg,
+    rgba(139, 69, 19, 0.4),
+    rgba(101, 67, 33, 0.4)
+  ) !important;
 }
 
 .suspicion-info {
@@ -422,7 +565,8 @@
 }
 
 @keyframes blink {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -453,9 +597,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 
-    0 8px 16px rgba(0, 0, 0, 0.4),
-    0 0 30px rgba(218, 165, 32, 0.3);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4), 0 0 30px rgba(218, 165, 32, 0.3);
   border: 3px solid rgba(218, 165, 32, 0.5);
   transition: transform 0.3s ease;
 }
@@ -465,12 +607,20 @@
 }
 
 .card-display.unknown {
-  background: linear-gradient(135deg, rgba(50, 50, 70, 0.8), rgba(30, 30, 50, 0.8));
+  background: linear-gradient(
+    135deg,
+    rgba(50, 50, 70, 0.8),
+    rgba(30, 30, 50, 0.8)
+  );
   border-color: rgba(150, 150, 150, 0.5);
 }
 
 .card-display.sender {
-  background: linear-gradient(135deg, rgba(139, 69, 19, 0.4), rgba(101, 67, 33, 0.4));
+  background: linear-gradient(
+    135deg,
+    rgba(139, 69, 19, 0.4),
+    rgba(101, 67, 33, 0.4)
+  );
 }
 
 .card-display.wrapper {
@@ -479,7 +629,11 @@
 }
 
 .card-display.ribbon {
-  background: linear-gradient(135deg, rgba(139, 69, 19, 0.3), rgba(101, 67, 33, 0.3));
+  background: linear-gradient(
+    135deg,
+    rgba(139, 69, 19, 0.3),
+    rgba(101, 67, 33, 0.3)
+  );
 }
 
 .card-display-content {
@@ -532,15 +686,12 @@
 }
 
 @keyframes confirmPulse {
-  0%, 100% {
-    box-shadow: 
-      0 4px 12px rgba(0, 0, 0, 0.4),
-      0 0 20px rgba(50, 205, 50, 0.3);
+  0%,
+  100% {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 20px rgba(50, 205, 50, 0.3);
   }
   50% {
-    box-shadow: 
-      0 6px 16px rgba(0, 0, 0, 0.5),
-      0 0 30px rgba(50, 205, 50, 0.5);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5), 0 0 30px rgba(50, 205, 50, 0.5);
   }
 }
 
@@ -555,7 +706,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Pantalla de espera */
@@ -584,16 +737,18 @@
 }
 
 .player-badge {
-  background: linear-gradient(135deg, rgba(34, 139, 34, 0.3), rgba(0, 100, 0, 0.3));
+  background: linear-gradient(
+    135deg,
+    rgba(34, 139, 34, 0.3),
+    rgba(0, 100, 0, 0.3)
+  );
   border: 2px solid #4caf50;
   border-radius: 20px;
   padding: 10px 20px;
   color: #90ee90;
   font-weight: 600;
   font-size: 1.1rem;
-  box-shadow: 
-    0 4px 8px rgba(0, 0, 0, 0.3),
-    0 0 15px rgba(76, 175, 80, 0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 0 15px rgba(76, 175, 80, 0.2);
   animation: fadeInScale 0.5s ease-out;
 }
 
@@ -623,7 +778,11 @@
 
 .secret-friend-display .card-option {
   min-width: 180px;
-  background: linear-gradient(135deg, rgba(218, 165, 32, 0.3), rgba(139, 69, 19, 0.2));
+  background: linear-gradient(
+    135deg,
+    rgba(218, 165, 32, 0.3),
+    rgba(139, 69, 19, 0.2)
+  );
   border: 4px solid #daa520;
   cursor: default;
   animation: glow 2s ease-in-out infinite;
@@ -634,15 +793,12 @@
 }
 
 @keyframes glow {
-  0%, 100% {
-    box-shadow: 
-      0 4px 12px rgba(0, 0, 0, 0.4),
-      0 0 20px rgba(218, 165, 32, 0.4);
+  0%,
+  100% {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 20px rgba(218, 165, 32, 0.4);
   }
   50% {
-    box-shadow: 
-      0 4px 16px rgba(0, 0, 0, 0.5),
-      0 0 30px rgba(218, 165, 32, 0.6);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), 0 0 30px rgba(218, 165, 32, 0.6);
   }
 }
 
@@ -882,7 +1038,8 @@
     padding: 6px 0;
   }
 
-  button, .btn-large {
+  button,
+  .btn-large {
     padding: 14px 20px;
     font-size: 1rem;
   }
@@ -891,6 +1048,44 @@
     width: 40px;
     height: 40px;
     border-width: 4px;
+  }
+
+  /* Deducción responsive tablet */
+  .deduction-header,
+  .deduction-row {
+    grid-template-columns: 90px repeat(6, 1fr);
+  }
+
+  .deduction-cell {
+    padding: 8px 4px;
+    min-height: 45px;
+    font-size: 0.8rem;
+  }
+
+  .deduction-cell.header-cell {
+    font-size: 0.75rem;
+  }
+
+  .deduction-cell.item-cell {
+    font-size: 0.8rem;
+    padding-left: 8px;
+  }
+
+  .deduction-cell.clickable {
+    font-size: 1rem;
+  }
+
+  .deduction-legend {
+    font-size: 0.8rem;
+    gap: 10px;
+  }
+
+  .deduction-section {
+    padding: 20px 15px;
+  }
+
+  .deduction-sheet {
+    padding: 15px;
   }
 }
 
@@ -1020,9 +1215,53 @@
     font-size: 32px;
   }
 
-  button, .btn-large {
+  button,
+  .btn-large {
     padding: 12px 16px;
     font-size: 0.95rem;
+  }
+
+  /* Deducción responsive móvil */
+  .deduction-header,
+  .deduction-row {
+    grid-template-columns: 70px repeat(6, 1fr);
+  }
+
+  .deduction-cell {
+    padding: 6px 2px;
+    min-height: 40px;
+    font-size: 0.7rem;
+  }
+
+  .deduction-cell.header-cell {
+    font-size: 0.65rem;
+  }
+
+  .deduction-cell.item-cell {
+    font-size: 0.7rem;
+    padding-left: 4px;
+  }
+
+  .deduction-cell.clickable {
+    font-size: 0.9rem;
+  }
+
+  .deduction-legend {
+    font-size: 0.7rem;
+    gap: 8px;
+    flex-direction: column;
+  }
+
+  .deduction-section {
+    padding: 15px 10px;
+  }
+
+  .deduction-sheet {
+    padding: 10px;
+  }
+
+  .deduction-table h5 {
+    font-size: 1.1rem;
   }
 }
 
@@ -1041,7 +1280,21 @@
 
   .card-option:active {
     transform: scale(0.98);
-    background: linear-gradient(135deg, rgba(139, 69, 19, 0.25), rgba(101, 67, 33, 0.25));
+    background: linear-gradient(
+      135deg,
+      rgba(139, 69, 19, 0.25),
+      rgba(101, 67, 33, 0.25)
+    );
+  }
+
+  .deduction-cell.clickable {
+    -webkit-tap-highlight-color: rgba(218, 165, 32, 0.3);
+    min-height: 44px;
+  }
+
+  .deduction-cell.clickable:active {
+    transform: scale(0.95);
+    background: rgba(218, 165, 32, 0.4);
   }
 
   .card-option.selected:active {

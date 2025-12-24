@@ -224,7 +224,7 @@ Secret Santa Clue/
 Para el evento necesitarás:
 
 ✅ **6 Regalos** envueltos (colores diferentes)
-✅ **6 Cintas** reales (colores: roja, verde, azul, dorada, plateada, blanca)
+✅ **6 Cintas** reales (colores: roja, verde, azul, dorada, plateada, Rosa)
 ✅ **1 Computadora** (servidor)
 ✅ **1 Pantalla Grande** (TV o proyector)
 ✅ **6 Dispositivos móviles** (uno por jugador)

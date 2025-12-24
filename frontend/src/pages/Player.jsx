@@ -1,153 +1,226 @@
-import { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
-import io from 'socket.io-client'
-import './Player.css'
+import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import io from 'socket.io-client';
+import './Player.css';
 
-const PLAYERS = ['Mamá', 'Papá', 'Fay', 'Fio', 'Tato', 'Raffa']
-const WRAPPERS = ['Regalo 1', 'Regalo 2', 'Regalo 3', 'Regalo 4', 'Regalo 5', 'Regalo 6']
-const RIBBONS = ['Roja', 'Verde', 'Azul', 'Dorada', 'Plateada', 'Blanca']
+const PLAYERS = ['Mamá', 'Papá', 'Fay', 'Fio', 'Tato', 'Raffa'];
+const WRAPPERS = [
+  'Regalo 1',
+  'Regalo 2',
+  'Regalo 3',
+  'Regalo 4',
+  'Regalo 5',
+  'Regalo 6',
+];
+const RIBBONS = ['Roja', 'Verde', 'Azul', 'Dorada', 'Plateada', 'Rosa'];
 
 // Helper para obtener la ruta de la imagen de una carta
 const getCardImage = (type, value) => {
-  const normalizedValue = value.toLowerCase()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // Remover tildes
-    .replace(/\s+/g, '-') // Reemplazar espacios con guiones
-  
+  const normalizedValue = value
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Remover tildes
+    .replace(/\s+/g, '-'); // Reemplazar espacios con guiones
+
   const typeFolder = {
     player: 'players',
     wrapper: 'wrappers',
-    ribbon: 'ribbons'
-  }[type]
-  
-  return `/cards/${typeFolder}/${normalizedValue}.png`
-}
+    ribbon: 'ribbons',
+  }[type];
+
+  return `/cards/${typeFolder}/${normalizedValue}.png`;
+};
 
 function Player() {
-  const { gameCode } = useParams()
-  const [socket, setSocket] = useState(null)
-  const [gameState, setGameState] = useState(null)
-  
+  const { gameCode } = useParams();
+  const [socket, setSocket] = useState(null);
+  const [gameState, setGameState] = useState(null);
+
   // Fase de selección
-  const [selectedPlayer, setSelectedPlayer] = useState('')
-  const [playerJoined, setPlayerJoined] = useState(false)
-  
+  const [selectedPlayer, setSelectedPlayer] = useState('');
+  const [playerJoined, setPlayerJoined] = useState(false);
+
   // Fase de armado de sobre
-  const [envelopePhase, setEnvelopePhase] = useState(false)
-  const [recipient, setRecipient] = useState('')
-  const [wrapperCard, setWrapperCard] = useState('')
-  const [envelopeCreated, setEnvelopeCreated] = useState(false)
-  
+  const [envelopePhase, setEnvelopePhase] = useState(false);
+  const [recipient, setRecipient] = useState('');
+  const [wrapperCard, setWrapperCard] = useState('');
+  const [envelopeCreated, setEnvelopeCreated] = useState(false);
+
   // Fase de juego
-  const [myEnvelope, setMyEnvelope] = useState(null)
-  const [suspicionMode, setSuspicionMode] = useState(false)
-  const [suspicionType, setSuspicionType] = useState('') // 'build' o 'hide'
-  const [selectedCards, setSelectedCards] = useState([]) // Cartas seleccionadas para armar sospecha
-  const [showingCards, setShowingCards] = useState(false) // Mostrar preview de cartas
-  const [cardsToShow, setCardsToShow] = useState([]) // Cartas que se mostrarán
-  const [currentSuspicion, setCurrentSuspicion] = useState(null)
+  const [myEnvelope, setMyEnvelope] = useState(null);
+  const [suspicionMode, setSuspicionMode] = useState(false);
+  const [suspicionType, setSuspicionType] = useState(''); // 'build' o 'hide'
+  const [selectedCards, setSelectedCards] = useState([]); // Cartas seleccionadas para armar sospecha
+  const [showingCards, setShowingCards] = useState(false); // Mostrar preview de cartas
+  const [cardsToShow, setCardsToShow] = useState([]); // Cartas que se mostrarán
+  const [currentSuspicion, setCurrentSuspicion] = useState(null);
+
+  // Hoja de deducción
+  const [deductionSheet, setDeductionSheet] = useState({
+    players: {},
+    wrappers: {},
+    ribbons: {}
+  });
+  const [showDeduction, setShowDeduction] = useState(false);
+
+  // Cargar hoja de deducción del localStorage
+  useEffect(() => {
+    if (gameCode && selectedPlayer) {
+      const storageKey = `deduction-${gameCode}-${selectedPlayer}`;
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        setDeductionSheet(JSON.parse(saved));
+      } else {
+        // Inicializar hoja vacía
+        const initial = {
+          players: {},
+          wrappers: {},
+          ribbons: {}
+        };
+        PLAYERS.forEach(p => initial.players[p] = {});
+        WRAPPERS.forEach(w => initial.wrappers[w] = {});
+        RIBBONS.forEach(r => initial.ribbons[r] = {});
+        setDeductionSheet(initial);
+      }
+    }
+  }, [gameCode, selectedPlayer]);
+
+  // Guardar hoja de deducción en localStorage
+  useEffect(() => {
+    if (gameCode && selectedPlayer && deductionSheet.players) {
+      const storageKey = `deduction-${gameCode}-${selectedPlayer}`;
+      localStorage.setItem(storageKey, JSON.stringify(deductionSheet));
+    }
+  }, [deductionSheet, gameCode, selectedPlayer]);
+
+  const toggleDeductionMark = (category, item, player) => {
+    setDeductionSheet(prev => {
+      const newSheet = { ...prev };
+      if (!newSheet[category][item]) newSheet[category][item] = {};
+      
+      const current = newSheet[category][item][player] || '';
+      // Ciclo: vacío -> ✓ -> ✗ -> ? -> vacío
+      const marks = ['', '✓', '✗', '?'];
+      const currentIndex = marks.indexOf(current);
+      newSheet[category][item][player] = marks[(currentIndex + 1) % marks.length];
+      
+      return newSheet;
+    });
+  };
 
   useEffect(() => {
-    const newSocket = io(import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001')
-    setSocket(newSocket)
+    const newSocket = io(
+      import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001'
+    );
+    setSocket(newSocket);
 
-    newSocket.emit('join-player', gameCode)
+    newSocket.emit('join-player', gameCode);
 
     newSocket.on('game-state', (state) => {
-      setGameState(state)
-      
+      setGameState(state);
+
       if (state.phase === 'setup') {
-        setEnvelopePhase(true)
+        setEnvelopePhase(true);
       }
-      
+
       if (state.phase === 'playing' && state.envelopes) {
         // Buscar mi sobre
-        const myEnv = state.envelopes.find(env => env.holder === selectedPlayer)
-        setMyEnvelope(myEnv)
+        const myEnv = state.envelopes.find(
+          (env) => env.holder === selectedPlayer
+        );
+        setMyEnvelope(myEnv);
       }
-    })
+    });
 
     newSocket.on('suspicion-started', (suspicion) => {
-      setCurrentSuspicion(suspicion)
+      setCurrentSuspicion(suspicion);
       if (suspicion.responder === selectedPlayer) {
-        setSuspicionMode(true)
+        setSuspicionMode(true);
       }
-    })
+    });
 
     newSocket.on('cards-revealed', (data) => {
       // Mostrar las cartas que se revelaron
-      console.log('Cartas reveladas:', data)
-    })
+      console.log('Cartas reveladas:', data);
+    });
 
-    return () => newSocket.close()
-  }, [gameCode, selectedPlayer])
+    return () => newSocket.close();
+  }, [gameCode, selectedPlayer]);
 
   const handleJoinGame = () => {
     if (selectedPlayer && socket) {
-      socket.emit('select-player', { gameCode, playerName: selectedPlayer })
-      setPlayerJoined(true)
+      socket.emit('select-player', { gameCode, playerName: selectedPlayer });
+      setPlayerJoined(true);
     }
-  }
+  };
 
   const handleCreateEnvelope = () => {
     // La cinta está asignada por el servidor
     // La carta de remitente siempre es el jugador actual
-    const assignedRibbon = gameState?.ribbonAssignments?.[selectedPlayer]
-    
+    const assignedRibbon = gameState?.ribbonAssignments?.[selectedPlayer];
+
     if (recipient && wrapperCard && assignedRibbon && socket) {
       socket.emit('create-envelope', {
         gameCode,
         creator: selectedPlayer,
         recipient: recipient,
-        sender: selectedPlayer,  // Siempre es el jugador actual
+        sender: selectedPlayer, // Siempre es el jugador actual
         wrapper: wrapperCard,
-        ribbon: assignedRibbon
-      })
-      setEnvelopeCreated(true)
+        ribbon: assignedRibbon,
+      });
+      setEnvelopeCreated(true);
     }
-  }
+  };
 
   const toggleCardSelection = (cardType, cardValue) => {
-    const isSelected = selectedCards.some(c => c.type === cardType)
-    
+    const isSelected = selectedCards.some((c) => c.type === cardType);
+
     if (isSelected) {
-      setSelectedCards(selectedCards.filter(c => c.type !== cardType))
+      setSelectedCards(selectedCards.filter((c) => c.type !== cardType));
     } else {
-      setSelectedCards([...selectedCards, { type: cardType, value: cardValue }])
+      setSelectedCards([
+        ...selectedCards,
+        { type: cardType, value: cardValue },
+      ]);
     }
-  }
+  };
 
   const handleSuspicionResponse = () => {
-    let cardsForDisplay = []
-    
+    let cardsForDisplay = [];
+
     if (suspicionType === 'build') {
       // Mostrar las cartas seleccionadas + completar con incógnitas hasta 3
-      cardsForDisplay = [...selectedCards]
+      cardsForDisplay = [...selectedCards];
       while (cardsForDisplay.length < 3) {
-        cardsForDisplay.push({ type: 'unknown' })
+        cardsForDisplay.push({ type: 'unknown' });
       }
     } else if (suspicionType === 'hide') {
       // Ocultar verdad: siempre mostrar 3 incógnitas
-      cardsForDisplay = [{ type: 'unknown' }, { type: 'unknown' }, { type: 'unknown' }]
+      cardsForDisplay = [
+        { type: 'unknown' },
+        { type: 'unknown' },
+        { type: 'unknown' },
+      ];
     }
-    
-    setCardsToShow(cardsForDisplay)
-    setShowingCards(true)
-  }
+
+    setCardsToShow(cardsForDisplay);
+    setShowingCards(true);
+  };
 
   const confirmShowCards = () => {
     // No se envía nada - solo se muestran las cartas en pantalla
     // El otro jugador se acerca físicamente a ver el celular
     // Las cartas ya están visibles en showingCards = true
-  }
+  };
 
   const closeCardsDisplay = () => {
     // Cerrar la visualización y volver a la pantalla principal
-    setSuspicionMode(false)
-    setSuspicionType('')
-    setSelectedCards([])
-    setShowingCards(false)
-    setCardsToShow([])
-  }
+    setSuspicionMode(false);
+    setSuspicionType('');
+    setSelectedCards([]);
+    setShowingCards(false);
+    setCardsToShow([]);
+  };
 
   // Pantalla de selección de jugador
   if (!playerJoined) {
@@ -157,44 +230,45 @@ function Player() {
           <div className="card player-card">
             <h1>🎄 Secret Santa Clue 🎁</h1>
             <h2>Código: {gameCode}</h2>
-            
+
             <div className="player-selection">
               <h3>¿Quién eres?</h3>
-              <select 
-                value={selectedPlayer} 
+              <select
+                value={selectedPlayer}
                 onChange={(e) => setSelectedPlayer(e.target.value)}
               >
                 <option value="">Selecciona tu personaje</option>
-                {PLAYERS.map(player => (
-                  <option key={player} value={player}>{player}</option>
+                {PLAYERS.map((player) => (
+                  <option key={player} value={player}>
+                    {player}
+                  </option>
                 ))}
               </select>
-              
-              <button 
-                onClick={handleJoinGame}
-                disabled={!selectedPlayer}
-              >
+
+              <button onClick={handleJoinGame} disabled={!selectedPlayer}>
                 Unirse al Juego
               </button>
             </div>
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   // Pantalla de espera - esperando a que se unan los 6 jugadores
   if (playerJoined && gameState?.phase === 'waiting') {
-    const playersCount = gameState?.players?.length || 0
+    const playersCount = gameState?.players?.length || 0;
     return (
       <div className="player-page">
         <div className="container">
           <div className="card player-card">
             <h1>🎄 Esperando Jugadores...</h1>
             <h3>Jugador: {selectedPlayer}</h3>
-            
+
             <div className="waiting-info">
-              <p>Jugadores unidos: <strong>{playersCount} / 6</strong></p>
+              <p>
+                Jugadores unidos: <strong>{playersCount} / 6</strong>
+              </p>
               <div className="players-list">
                 {gameState.players.map((p, i) => (
                   <div key={i} className="player-badge">
@@ -202,49 +276,53 @@ function Player() {
                   </div>
                 ))}
               </div>
-              <p className="waiting-message">Esperando a que todos los jugadores se unan...</p>
+              <p className="waiting-message">
+                Esperando a que todos los jugadores se unan...
+              </p>
               <div className="spinner"></div>
             </div>
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   // Pantalla de armado de sobre
   if (envelopePhase && !envelopeCreated) {
     // La cinta está asignada por el servidor
-    const assignedRibbon = gameState?.ribbonAssignments?.[selectedPlayer] || ''
-    const availableRecipients = PLAYERS.filter(p => p !== selectedPlayer)
-    
+    const assignedRibbon = gameState?.ribbonAssignments?.[selectedPlayer] || '';
+    const availableRecipients = PLAYERS.filter((p) => p !== selectedPlayer);
+
     return (
       <div className="player-page">
         <div className="container">
           <div className="card player-card">
             <h1>🎁 Arma tu Sobre</h1>
             <h3>Jugador: {selectedPlayer}</h3>
-            
+
             <div className="envelope-form">
               <div className="form-section">
                 <h4>¿De quién es el sobre?</h4>
                 <div className="card-grid">
-                  {availableRecipients.map(player => (
-                    <div 
+                  {availableRecipients.map((player) => (
+                    <div
                       key={player}
-                      className={`card-option ${recipient === player ? 'selected' : ''}`}
+                      className={`card-option ${
+                        recipient === player ? 'selected' : ''
+                      }`}
                       onClick={() => setRecipient(player)}
                     >
                       <div className="card-image-wrapper">
-                        <img 
-                          src={getCardImage('player', player)} 
+                        <img
+                          src={getCardImage('player', player)}
                           alt={player}
                           className="card-img"
                           onError={(e) => {
-                            e.target.style.display = 'none'
-                            e.target.nextSibling.style.display = 'flex'
+                            e.target.style.display = 'none';
+                            e.target.nextSibling.style.display = 'flex';
                           }}
                         />
-                        <div className="card-image" style={{display: 'none'}}>
+                        <div className="card-image" style={{ display: 'none' }}>
                           <span>👤</span>
                         </div>
                       </div>
@@ -258,16 +336,16 @@ function Player() {
                 <div className="secret-friend-display">
                   <div className="card-option selected">
                     <div className="card-image-wrapper">
-                      <img 
-                        src={getCardImage('player', selectedPlayer)} 
+                      <img
+                        src={getCardImage('player', selectedPlayer)}
                         alt={selectedPlayer}
                         className="card-img"
                         onError={(e) => {
-                          e.target.style.display = 'none'
-                          e.target.nextSibling.style.display = 'flex'
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
                         }}
                       />
-                      <div className="card-image" style={{display: 'none'}}>
+                      <div className="card-image" style={{ display: 'none' }}>
                         <span>📝</span>
                       </div>
                     </div>
@@ -278,25 +356,30 @@ function Player() {
               <div className="form-section">
                 <h4>Tu carta de regalo:</h4>
                 <div className="card-grid">
-                  {WRAPPERS.map(w => (
-                    <div 
+                  {WRAPPERS.map((w) => (
+                    <div
                       key={w}
-                      className={`card-option ${wrapperCard === w ? 'selected' : ''}`}
+                      className={`card-option ${
+                        wrapperCard === w ? 'selected' : ''
+                      }`}
                       onClick={() => setWrapperCard(w)}
                     >
                       <div className="card-image-wrapper">
-                        <img 
-                          src={getCardImage('wrapper', w)} 
+                        <img
+                          src={getCardImage('wrapper', w)}
                           alt={w}
                           className="card-img"
                           onError={(e) => {
-                            e.target.style.display = 'none'
-                            e.target.nextSibling.style.display = 'flex'
+                            e.target.style.display = 'none';
+                            e.target.nextSibling.style.display = 'flex';
                           }}
                         />
-                        <div className="card-image" style={{ 
-                          display: 'none'
-                        }}>
+                        <div
+                          className="card-image"
+                          style={{
+                            display: 'none',
+                          }}
+                        >
                           <span>🎁</span>
                         </div>
                       </div>
@@ -310,29 +393,31 @@ function Player() {
                 <div className="secret-friend-display">
                   <div className="card-option selected">
                     <div className="card-image-wrapper">
-                      <img 
-                        src={getCardImage('ribbon', assignedRibbon)} 
+                      <img
+                        src={getCardImage('ribbon', assignedRibbon)}
                         alt={assignedRibbon}
                         className="card-img"
                         onError={(e) => {
-                          e.target.style.display = 'none'
-                          e.target.nextSibling.style.display = 'flex'
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
                         }}
                       />
-                      <div className="card-image" style={{display: 'none'}}>
-                        <div style={{
-                          width: '80%',
-                          height: '8px',
-                          background: assignedRibbon.toLowerCase(),
-                          borderRadius: '4px'
-                        }}></div>
+                      <div className="card-image" style={{ display: 'none' }}>
+                        <div
+                          style={{
+                            width: '80%',
+                            height: '8px',
+                            background: assignedRibbon.toLowerCase(),
+                            borderRadius: '4px',
+                          }}
+                        ></div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <button 
+              <button
                 onClick={handleCreateEnvelope}
                 disabled={!recipient || !wrapperCard || !assignedRibbon}
                 className="btn-large"
@@ -343,7 +428,7 @@ function Player() {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   // Pantalla de espera
@@ -358,7 +443,7 @@ function Player() {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   // Pantalla de mostrar cartas (preview antes de confirmar)
@@ -368,8 +453,10 @@ function Player() {
         <div className="container">
           <div className="card player-card">
             <h1>📋 Muestra estas cartas</h1>
-            <p className="show-instruction">El otro jugador puede ver tu pantalla ahora</p>
-            
+            <p className="show-instruction">
+              El otro jugador puede ver tu pantalla ahora
+            </p>
+
             <div className="cards-display-grid">
               {cardsToShow.map((card, index) => (
                 <div key={index} className="display-card">
@@ -382,19 +469,22 @@ function Player() {
                     </div>
                   ) : (
                     <div className="card-display">
-                      <img 
+                      <img
                         src={getCardImage(
                           card.type === 'sender' ? 'player' : card.type,
                           card.value
-                        )} 
+                        )}
                         alt={card.value}
                         className="card-display-img"
                         onError={(e) => {
-                          e.target.style.display = 'none'
-                          e.target.nextSibling.style.display = 'flex'
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
                         }}
                       />
-                      <div className="card-display-fallback" style={{display: 'none'}}>
+                      <div
+                        className="card-display-fallback"
+                        style={{ display: 'none' }}
+                      >
                         {card.type === 'sender' ? (
                           <div className="card-display-content">
                             <span className="card-icon">📝</span>
@@ -409,13 +499,15 @@ function Player() {
                           </div>
                         ) : card.type === 'ribbon' ? (
                           <div className="card-display-content">
-                            <div style={{
-                              width: '80%',
-                              height: '12px',
-                              background: card.value.toLowerCase(),
-                              borderRadius: '6px',
-                              margin: '10px auto'
-                            }}></div>
+                            <div
+                              style={{
+                                width: '80%',
+                                height: '12px',
+                                background: card.value.toLowerCase(),
+                                borderRadius: '6px',
+                                margin: '10px auto',
+                              }}
+                            ></div>
                             <p className="card-type">Cinta</p>
                             <p className="card-value">{card.value}</p>
                           </div>
@@ -428,21 +520,27 @@ function Player() {
             </div>
 
             <div className="confirmation-buttons">
-              <button onClick={closeCardsDisplay} className="btn-large btn-close">
+              <button
+                onClick={closeCardsDisplay}
+                className="btn-large btn-close"
+              >
                 ✅ Listo - Ya mostré las cartas
               </button>
-              <button onClick={() => {
-                setShowingCards(false)
-                setSuspicionType('')
-                setSelectedCards([])
-              }} className="btn-large btn-secondary">
+              <button
+                onClick={() => {
+                  setShowingCards(false);
+                  setSuspicionType('');
+                  setSelectedCards([]);
+                }}
+                className="btn-large btn-secondary"
+              >
                 ⬅️ Volver a Elegir
               </button>
             </div>
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   // Modo sospecha activo
@@ -453,7 +551,7 @@ function Player() {
           <div className="card player-card">
             <h1>🔍 Modo Sospecha</h1>
             <h3>Jugador: {selectedPlayer}</h3>
-            
+
             <div className="suspicion-info">
               <p>Alguien te está preguntando sobre tu sobre custodiado</p>
             </div>
@@ -469,7 +567,10 @@ function Player() {
                   🤫 Ocultar Verdad
                   <small>Muestra 3 cartas incógnitas</small>
                 </button>
-                <button onClick={() => setSuspicionMode(false)} className="btn-secondary">
+                <button
+                  onClick={() => setSuspicionMode(false)}
+                  className="btn-secondary"
+                >
                   ❌ Cancelar
                 </button>
               </div>
@@ -480,21 +581,27 @@ function Player() {
                 <h4>Selecciona las cartas que coinciden:</h4>
                 <p className="hint-text">Toca las cartas que quieres mostrar</p>
                 <div className="card-grid suspicion-card-grid">
-                  <div 
-                    className={`card-option ${selectedCards.some(c => c.type === 'sender') ? 'selected' : ''}`}
-                    onClick={() => toggleCardSelection('sender', myEnvelope.cards.sender)}
+                  <div
+                    className={`card-option ${
+                      selectedCards.some((c) => c.type === 'sender')
+                        ? 'selected'
+                        : ''
+                    }`}
+                    onClick={() =>
+                      toggleCardSelection('sender', myEnvelope.cards.sender)
+                    }
                   >
                     <div className="card-image-wrapper">
-                      <img 
-                        src={getCardImage('player', myEnvelope.cards.sender)} 
+                      <img
+                        src={getCardImage('player', myEnvelope.cards.sender)}
                         alt={myEnvelope.cards.sender}
                         className="card-img"
                         onError={(e) => {
-                          e.target.style.display = 'none'
-                          e.target.nextSibling.style.display = 'flex'
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
                         }}
                       />
-                      <div className="card-image" style={{display: 'none'}}>
+                      <div className="card-image" style={{ display: 'none' }}>
                         <span>📝</span>
                       </div>
                     </div>
@@ -502,21 +609,27 @@ function Player() {
                     <small>{myEnvelope.cards.sender}</small>
                   </div>
 
-                  <div 
-                    className={`card-option ${selectedCards.some(c => c.type === 'wrapper') ? 'selected' : ''}`}
-                    onClick={() => toggleCardSelection('wrapper', myEnvelope.cards.wrapper)}
+                  <div
+                    className={`card-option ${
+                      selectedCards.some((c) => c.type === 'wrapper')
+                        ? 'selected'
+                        : ''
+                    }`}
+                    onClick={() =>
+                      toggleCardSelection('wrapper', myEnvelope.cards.wrapper)
+                    }
                   >
                     <div className="card-image-wrapper">
-                      <img 
-                        src={getCardImage('wrapper', myEnvelope.cards.wrapper)} 
+                      <img
+                        src={getCardImage('wrapper', myEnvelope.cards.wrapper)}
                         alt={myEnvelope.cards.wrapper}
                         className="card-img"
                         onError={(e) => {
-                          e.target.style.display = 'none'
-                          e.target.nextSibling.style.display = 'flex'
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
                         }}
                       />
-                      <div className="card-image" style={{display: 'none'}}>
+                      <div className="card-image" style={{ display: 'none' }}>
                         <span>🎁</span>
                       </div>
                     </div>
@@ -524,27 +637,35 @@ function Player() {
                     <small>{myEnvelope.cards.wrapper}</small>
                   </div>
 
-                  <div 
-                    className={`card-option ${selectedCards.some(c => c.type === 'ribbon') ? 'selected' : ''}`}
-                    onClick={() => toggleCardSelection('ribbon', myEnvelope.cards.ribbon)}
+                  <div
+                    className={`card-option ${
+                      selectedCards.some((c) => c.type === 'ribbon')
+                        ? 'selected'
+                        : ''
+                    }`}
+                    onClick={() =>
+                      toggleCardSelection('ribbon', myEnvelope.cards.ribbon)
+                    }
                   >
                     <div className="card-image-wrapper">
-                      <img 
-                        src={getCardImage('ribbon', myEnvelope.cards.ribbon)} 
+                      <img
+                        src={getCardImage('ribbon', myEnvelope.cards.ribbon)}
                         alt={myEnvelope.cards.ribbon}
                         className="card-img"
                         onError={(e) => {
-                          e.target.style.display = 'none'
-                          e.target.nextSibling.style.display = 'flex'
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
                         }}
                       />
-                      <div className="card-image" style={{display: 'none'}}>
-                        <div style={{
-                          width: '80%',
-                          height: '8px',
-                          background: myEnvelope.cards.ribbon.toLowerCase(),
-                          borderRadius: '4px'
-                        }}></div>
+                      <div className="card-image" style={{ display: 'none' }}>
+                        <div
+                          style={{
+                            width: '80%',
+                            height: '8px',
+                            background: myEnvelope.cards.ribbon.toLowerCase(),
+                            borderRadius: '4px',
+                          }}
+                        ></div>
                       </div>
                     </div>
                     <p>Cinta</p>
@@ -553,7 +674,12 @@ function Player() {
                 </div>
 
                 <div className="cards-preview">
-                  <h5>Se mostrarán: {selectedCards.length} carta{selectedCards.length !== 1 ? 's' : ''} + {3 - selectedCards.length} incógnita{3 - selectedCards.length !== 1 ? 's' : ''}</h5>
+                  <h5>
+                    Se mostrarán: {selectedCards.length} carta
+                    {selectedCards.length !== 1 ? 's' : ''} +{' '}
+                    {3 - selectedCards.length} incógnita
+                    {3 - selectedCards.length !== 1 ? 's' : ''}
+                  </h5>
                 </div>
 
                 <button onClick={handleSuspicionResponse} className="btn-large">
@@ -566,11 +692,9 @@ function Player() {
               <div className="cards-selection">
                 <h4>Se mostrarán 3 cartas incógnitas</h4>
                 <div className="cards-preview">
-                  {[0, 1, 2].map(i => (
+                  {[0, 1, 2].map((i) => (
                     <div key={i} className="card-preview">
-                      <div className="card-image">
-                        ❓
-                      </div>
+                      <div className="card-image">❓</div>
                     </div>
                   ))}
                 </div>
@@ -582,7 +706,7 @@ function Player() {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   // Pantalla principal de juego
@@ -596,9 +720,16 @@ function Player() {
           {myEnvelope && (
             <div className="my-envelope">
               <h4>Tu Sobre (Custodiando):</h4>
-              <p className="envelope-label">Sobre de: <strong>{myEnvelope.recipient}</strong></p>
+              <p className="envelope-label">
+                Sobre de: <strong>{myEnvelope.recipient}</strong>
+              </p>
               <div className="envelope-cards">
-                <p>Contiene {myEnvelope.cards ? '3 cartas de datos + 3 incógnitas' : '6 cartas'}</p>
+                <p>
+                  Contiene{' '}
+                  {myEnvelope.cards
+                    ? '3 cartas de datos + 3 incógnitas'
+                    : '6 cartas'}
+                </p>
               </div>
             </div>
           )}
@@ -606,7 +737,7 @@ function Player() {
           <div className="suspicion-trigger">
             <h4>🔍 Modo Responder Sospecha</h4>
             <p>Activa este modo cuando alguien te pregunte sobre tu sobre</p>
-            <button 
+            <button
               onClick={() => setSuspicionMode(true)}
               className="btn-large"
             >
@@ -614,11 +745,117 @@ function Player() {
             </button>
           </div>
 
+          <div className="deduction-section">
+            <h4>📋 Hoja de Deducción</h4>
+            <p>Marca las cartas según tus deducciones</p>
+            <button
+              onClick={() => setShowDeduction(!showDeduction)}
+              className="btn-large btn-secondary"
+            >
+              {showDeduction ? 'Ocultar' : 'Mostrar'} Hoja de Deducción
+            </button>
+
+            {showDeduction && (
+              <div className="deduction-sheet">
+                <div className="deduction-legend">
+                  <span><strong>Marcas:</strong></span>
+                  <span>✓ = Tiene</span>
+                  <span>✗ = No tiene</span>
+                  <span>? = Duda</span>
+                  <span>(Toca para cambiar)</span>
+                </div>
+
+                {/* Tabla de Jugadores */}
+                <div className="deduction-table">
+                  <h5>👤 Remitentes</h5>
+                  <div className="deduction-grid">
+                    <div className="deduction-header">
+                      <div className="deduction-cell"></div>
+                      {PLAYERS.map(p => (
+                        <div key={p} className="deduction-cell header-cell">{p}</div>
+                      ))}
+                    </div>
+                    {PLAYERS.map(item => (
+                      <div key={item} className="deduction-row">
+                        <div className="deduction-cell item-cell">{item}</div>
+                        {PLAYERS.map(player => (
+                          <div
+                            key={player}
+                            className="deduction-cell clickable"
+                            onClick={() => toggleDeductionMark('players', item, player)}
+                          >
+                            {deductionSheet.players[item]?.[player] || ''}
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Tabla de Regalos */}
+                <div className="deduction-table">
+                  <h5>🎁 Regalos</h5>
+                  <div className="deduction-grid">
+                    <div className="deduction-header">
+                      <div className="deduction-cell"></div>
+                      {PLAYERS.map(p => (
+                        <div key={p} className="deduction-cell header-cell">{p}</div>
+                      ))}
+                    </div>
+                    {WRAPPERS.map(item => (
+                      <div key={item} className="deduction-row">
+                        <div className="deduction-cell item-cell">{item}</div>
+                        {PLAYERS.map(player => (
+                          <div
+                            key={player}
+                            className="deduction-cell clickable"
+                            onClick={() => toggleDeductionMark('wrappers', item, player)}
+                          >
+                            {deductionSheet.wrappers[item]?.[player] || ''}
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Tabla de Cintas */}
+                <div className="deduction-table">
+                  <h5>🎀 Cintas</h5>
+                  <div className="deduction-grid">
+                    <div className="deduction-header">
+                      <div className="deduction-cell"></div>
+                      {PLAYERS.map(p => (
+                        <div key={p} className="deduction-cell header-cell">{p}</div>
+                      ))}
+                    </div>
+                    {RIBBONS.map(item => (
+                      <div key={item} className="deduction-row">
+                        <div className="deduction-cell item-cell">{item}</div>
+                        {PLAYERS.map(player => (
+                          <div
+                            key={player}
+                            className="deduction-cell clickable"
+                            onClick={() => toggleDeductionMark('ribbons', item, player)}
+                          >
+                            {deductionSheet.ribbons[item]?.[player] || ''}
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
           <div className="instructions">
             <h4>📝 Instrucciones:</h4>
             <ul>
               <li>Observa el tablero en la pantalla principal</li>
-              <li>Cuando alguien te pregunte, presiona "Activar Modo Sospecha"</li>
+              <li>
+                Cuando alguien te pregunte, presiona "Activar Modo Sospecha"
+              </li>
               <li>Elige si mostrar cartas coincidentes u ocultar la verdad</li>
               <li>¡Deduce quién es tu Amigo Secreto!</li>
             </ul>
@@ -626,7 +863,7 @@ function Player() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default Player
+export default Player;

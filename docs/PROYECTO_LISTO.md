@@ -9,6 +9,7 @@ Fecha: 23 de diciembre de 2025
 ## ✅ Verificación de Instalación
 
 ### Frontend
+
 - ✅ Dependencias instaladas (89 paquetes)
 - ✅ Vite configurado
 - ✅ React Router configurado
@@ -16,12 +17,14 @@ Fecha: 23 de diciembre de 2025
 - ✅ React DnD instalado
 
 ### Backend
+
 - ✅ Dependencias instaladas (132 paquetes)
 - ✅ Express configurado
 - ✅ Socket.io server instalado
 - ✅ Archivo .env creado
 
 ### Assets
+
 - ✅ Imagen del tablero copiada a `frontend/public/tablero.jpg`
 
 ---
@@ -31,17 +34,21 @@ Fecha: 23 de diciembre de 2025
 ### Abre DOS terminales de PowerShell:
 
 **Terminal 1 - Backend:**
+
 ```powershell
 cd "c:\Users\Fabrizio Camaggi\OneDrive\Documentos\Desarrollo\Secret Santa Clue\backend"
 npm run dev
 ```
+
 **Deberías ver:** `🎄 Servidor Secret Santa Clue corriendo en puerto 3001`
 
 **Terminal 2 - Frontend:**
+
 ```powershell
 cd "c:\Users\Fabrizio Camaggi\OneDrive\Documentos\Desarrollo\Secret Santa Clue\frontend"
 npm run dev
 ```
+
 **Deberías ver:** `Local: http://localhost:3000/`
 
 ---
@@ -60,9 +67,11 @@ npm run dev
 ## 📱 Para Probar con Otros Dispositivos
 
 1. Obtén tu IP local:
+
    ```powershell
    ipconfig
    ```
+
    Busca **IPv4 Address** (ejemplo: 192.168.1.10)
 
 2. En otros dispositivos (móviles, tablets):
@@ -87,6 +96,7 @@ Todo listo en la carpeta del proyecto:
 ## 🎯 Checklist Pre-Evento
 
 ### Esta Semana:
+
 - [x] ✅ Instalar dependencias
 - [x] ✅ Copiar imagen del tablero
 - [x] ✅ Configurar .env
@@ -94,6 +104,7 @@ Todo listo en la carpeta del proyecto:
 - [ ] 📖 Leer GUIA_EVENTO.md
 
 ### Día del Evento:
+
 - [ ] Iniciar backend (30 min antes)
 - [ ] Iniciar frontend (30 min antes)
 - [ ] Preparar pantalla grande
@@ -109,7 +120,7 @@ Todo listo en la carpeta del proyecto:
 Para el evento:
 
 ✅ 6 Regalos envueltos (identificables por color de papel)
-✅ 6 Cintas reales (roja, verde, azul, dorada, plateada, blanca)
+✅ 6 Cintas reales (roja, verde, azul, dorada, plateada, Rosa)
 ✅ 1 Computadora (servidor)
 ✅ 1 Pantalla grande (TV/Proyector)
 ✅ 6 Dispositivos móviles (smartphones/tablets)
@@ -132,6 +143,7 @@ Para el evento:
 El proyecto está **100% funcional** y listo para tu evento navideño.
 
 ### Siguiente Acción:
+
 ```powershell
 # Terminal 1
 cd backend

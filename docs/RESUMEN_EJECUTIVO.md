@@ -1,17 +1,20 @@
 # 🎄 Secret Santa Clue - Resumen Ejecutivo
 
 ## ¿Qué es?
+
 Un juego de deducción navideño tipo Clue donde 6 jugadores descubren quién es su Amigo Secreto, qué envoltorio tiene su regalo y qué cinta le pusieron.
 
 ## 🚀 Inicio Rápido (2 comandos)
 
 **Terminal 1 - Backend:**
+
 ```powershell
 cd backend
 npm run dev
 ```
 
 **Terminal 2 - Frontend:**
+
 ```powershell
 cd frontend
 npm run dev
@@ -29,6 +32,7 @@ npm run dev
 ## 🎯 Estado del Proyecto
 
 ✅ **LISTO PARA USAR**
+
 - ✅ Código completo
 - ✅ Dependencias instaladas
 - ✅ Imagen del tablero copiada
@@ -44,7 +48,7 @@ npm run dev
 ## 🎁 Necesitas Físicamente
 
 - 6 regalos envueltos (colores diferentes)
-- 6 cintas reales (roja, verde, azul, dorada, plateada, blanca)
+- 6 cintas reales (roja, verde, azul, dorada, plateada, Rosa)
 - 1 computadora + 1 pantalla grande
 - 6 móviles + WiFi
 

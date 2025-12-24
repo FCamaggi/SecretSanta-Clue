@@ -1,9 +1,11 @@
 # Hoja de Deducción - Secret Santa Clue
 
-**Jugador:** ___________________
+**Jugador:** ********\_\_\_********
 
 ## Mi Objetivo
+
 Descubrir las 3 cartas de MI sobre:
+
 - ¿Quién me regaló? (Remitente)
 - ¿Qué envoltorio tiene?
 - ¿Qué cinta tiene?
@@ -13,41 +15,44 @@ Descubrir las 3 cartas de MI sobre:
 ## Tabla de Descarte
 
 ### Remitentes (Jugadores)
+
 | Jugador | ¿Es mi remitente? | Notas |
-|---------|-------------------|-------|
-| Mamá    | ☐ SÍ ☐ NO        |       |
-| Papá    | ☐ SÍ ☐ NO        |       |
-| Fay     | ☐ SÍ ☐ NO        |       |
-| Fio     | ☐ SÍ ☐ NO        |       |
-| Tato    | ☐ SÍ ☐ NO        |       |
-| Raffa   | ☐ SÍ ☐ NO        |       |
+| ------- | ----------------- | ----- |
+| Mamá    | ☐ SÍ ☐ NO         |       |
+| Papá    | ☐ SÍ ☐ NO         |       |
+| Fay     | ☐ SÍ ☐ NO         |       |
+| Fio     | ☐ SÍ ☐ NO         |       |
+| Tato    | ☐ SÍ ☐ NO         |       |
+| Raffa   | ☐ SÍ ☐ NO         |       |
 
 ### Envoltorios
+
 | Color      | ¿Es mi envoltorio? | Notas |
-|------------|-------------------|-------|
-| Rojo       | ☐ SÍ ☐ NO        |       |
-| Verde      | ☐ SÍ ☐ NO        |       |
-| Azul       | ☐ SÍ ☐ NO        |       |
-| Dorado     | ☐ SÍ ☐ NO        |       |
-| Plateado   | ☐ SÍ ☐ NO        |       |
-| Multicolor | ☐ SÍ ☐ NO        |       |
+| ---------- | ------------------ | ----- |
+| Rojo       | ☐ SÍ ☐ NO          |       |
+| Verde      | ☐ SÍ ☐ NO          |       |
+| Azul       | ☐ SÍ ☐ NO          |       |
+| Dorado     | ☐ SÍ ☐ NO          |       |
+| Plateado   | ☐ SÍ ☐ NO          |       |
+| Multicolor | ☐ SÍ ☐ NO          |       |
 
 ### Cintas
+
 | Color    | ¿Es mi cinta? | Notas |
-|----------|---------------|-------|
-| Roja     | ☐ SÍ ☐ NO    |       |
-| Verde    | ☐ SÍ ☐ NO    |       |
-| Azul     | ☐ SÍ ☐ NO    |       |
-| Dorada   | ☐ SÍ ☐ NO    |       |
-| Plateada | ☐ SÍ ☐ NO    |       |
-| Blanca   | ☐ SÍ ☐ NO    |       |
+| -------- | ------------- | ----- |
+| Roja     | ☐ SÍ ☐ NO     |       |
+| Verde    | ☐ SÍ ☐ NO     |       |
+| Azul     | ☐ SÍ ☐ NO     |       |
+| Dorada   | ☐ SÍ ☐ NO     |       |
+| Plateada | ☐ SÍ ☐ NO     |       |
+| Rosa     | ☐ SÍ ☐ NO     |       |
 
 ---
 
 ## Registro de Sospechas
 
 | Turno | Sospecha (Remitente/Envoltorio/Cinta) | Respondió | Mostró | Conclusión |
-|-------|---------------------------------------|-----------|--------|------------|
+| ----- | ------------------------------------- | --------- | ------ | ---------- |
 | 1     |                                       |           |        |            |
 | 2     |                                       |           |        |            |
 | 3     |                                       |           |        |            |
@@ -61,15 +66,16 @@ Descubrir las 3 cartas de MI sobre:
 
 ## Mi Acusación Final
 
-**Remitente:** ___________________
+**Remitente:** ********\_\_\_********
 
-**Envoltorio:** ___________________
+**Envoltorio:** ********\_\_\_********
 
-**Cinta:** ___________________
+**Cinta:** ********\_\_\_********
 
 ---
 
 ## Consejos
+
 - Si alguien te MUESTRA una carta → NO es tuya
 - Si NADIE te muestra una carta → Probablemente es tuya
 - Solo hay UNA carta de cada tipo en todo el juego

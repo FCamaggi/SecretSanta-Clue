@@ -32,11 +32,11 @@ app.post('/api/game/create', (req, res) => {
 app.get('/api/game/:gameCode', (req, res) => {
   const { gameCode } = req.params
   const game = gameManager.getGame(gameCode)
-  
+
   if (!game) {
     return res.status(404).json({ error: 'Juego no encontrado' })
   }
-  
+
   res.json(game)
 })
 
@@ -181,12 +181,12 @@ io.on('connection', (socket) => {
     const suspicion = game.lastSuspicion
     if (suspicion) {
       const hasEvidence = cards.some(c => c.type !== 'unknown')
-      
+
       if (!hasEvidence) {
         // Pasar al siguiente respondedor
         suspicion.currentResponder++
         const responders = game.players.filter(p => p.name !== suspicion.player)
-        
+
         if (suspicion.currentResponder < responders.length) {
           const nextResponder = responders[suspicion.currentResponder].name
           io.to(`game-${gameCode}`).emit('suspicion-started', {
@@ -217,14 +217,14 @@ io.on('connection', (socket) => {
 
     // Buscar el sobre del jugador
     const playerEnvelope = game.envelopes.find(env => env.recipient === player)
-    
+
     if (!playerEnvelope) {
       socket.emit('accusation-result', { success: false, message: 'Sobre no encontrado' })
       return
     }
 
     // Verificar si la acusación es correcta
-    const isCorrect = 
+    const isCorrect =
       playerEnvelope.cards.sender === sender &&
       playerEnvelope.cards.wrapper === wrapper &&
       playerEnvelope.cards.ribbon === ribbon
@@ -232,7 +232,7 @@ io.on('connection', (socket) => {
     if (isCorrect) {
       game.winners = game.winners || []
       game.winners.push(player)
-      
+
       io.to(`game-${gameCode}`).emit('accusation-result', {
         success: true,
         player,
@@ -253,7 +253,7 @@ io.on('connection', (socket) => {
         success: false,
         message: 'Acusación incorrecta'
       })
-      
+
       // El jugador pierde pero sigue mostrando cartas
       const playerObj = game.players.find(p => p.name === player)
       if (playerObj) {
@@ -273,14 +273,14 @@ io.on('connection', (socket) => {
 
 // Función para asignar amigos secretos (evitando auto-asignación)
 function assignRibbons(players) {
-  const ribbons = ['Roja', 'Verde', 'Azul', 'Dorada', 'Plateada', 'Blanca']
+  const ribbons = ['Roja', 'Verde', 'Azul', 'Dorada', 'Plateada', 'Rosa']
   const shuffledRibbons = shuffleArray([...ribbons])
-  
+
   const assignments = {}
   for (let i = 0; i < players.length; i++) {
     assignments[players[i]] = shuffledRibbons[i]
   }
-  
+
   return assignments
 }
 
@@ -294,7 +294,7 @@ function distributeEnvelopes(envelopes) {
   // Barajar hasta que ningún sobre coincida con su destinatario
   while (attempts < maxAttempts) {
     holders = shuffleArray([...recipients])
-    
+
     const isValid = envelopes.every((env, index) => {
       return env.recipient !== holders[index]
     })
