@@ -109,6 +109,7 @@ function Player() {
   };
 
   useEffect(() => {
+    // Solo crear el socket al inicio, sin depender de selectedPlayer
     const newSocket = io(
       import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001'
     );
@@ -124,17 +125,20 @@ function Player() {
       }
 
       if (state.phase === 'playing' && state.envelopes) {
-        // Buscar mi sobre
-        const myEnv = state.envelopes.find(
-          (env) => env.holder === selectedPlayer
-        );
-        setMyEnvelope(myEnv);
+        // Buscar mi sobre - solo cuando playerJoined es true
+        if (playerJoined) {
+          const myEnv = state.envelopes.find(
+            (env) => env.holder === selectedPlayer
+          );
+          setMyEnvelope(myEnv);
+        }
       }
     });
 
     newSocket.on('suspicion-started', (suspicion) => {
       setCurrentSuspicion(suspicion);
-      if (suspicion.responder === selectedPlayer) {
+      // Solo responder si ya hemos seleccionado jugador
+      if (playerJoined && suspicion.responder === selectedPlayer) {
         setSuspicionMode(true);
       }
     });
@@ -145,7 +149,7 @@ function Player() {
     });
 
     return () => newSocket.close();
-  }, [gameCode, selectedPlayer]);
+  }, [gameCode]); // Removido selectedPlayer de las dependencias
 
   const handleJoinGame = () => {
     if (selectedPlayer && socket) {
