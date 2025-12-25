@@ -123,7 +123,7 @@ io.on('connection', (socket) => {
     // Si todos están listos, repartir sobres
     if (game.players.length === 6 && game.players.every(p => p.ready)) {
       game.phase = 'distributing'
-      game.envelopes = distributeEnvelopes(game.envelopes)
+      game.envelopes = distributeEnvelopes(game.envelopes, game.players)
       game.phase = 'playing'
       game.currentTurn = game.players[0].name
     }
@@ -285,15 +285,15 @@ function assignRibbons(players) {
 }
 
 // Función para repartir sobres (evitando auto-asignación)
-function distributeEnvelopes(envelopes) {
-  const recipients = envelopes.map(e => e.recipient)
-  let holders = [...recipients]
+function distributeEnvelopes(envelopes, players) {
+  const playerNames = players.map(p => p.name)
+  let holders = [...playerNames]
   let attempts = 0
   const maxAttempts = 100
 
   // Barajar hasta que ningún sobre coincida con su destinatario
   while (attempts < maxAttempts) {
-    holders = shuffleArray([...recipients])
+    holders = shuffleArray([...playerNames])
 
     const isValid = envelopes.every((env, index) => {
       return env.recipient !== holders[index]
@@ -305,11 +305,16 @@ function distributeEnvelopes(envelopes) {
     attempts++
   }
 
+  console.log('📦 Distribución de sobres:')
   // Asignar holders
-  return envelopes.map((env, index) => ({
-    ...env,
-    holder: holders[index]
-  }))
+  return envelopes.map((env, index) => {
+    const updatedEnv = {
+      ...env,
+      holder: holders[index]
+    }
+    console.log(`  - Sobre de ${env.recipient} → custodiado por ${holders[index]}`)
+    return updatedEnv
+  })
 }
 
 const PORT = process.env.PORT || 3001

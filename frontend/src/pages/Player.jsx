@@ -108,52 +108,55 @@ function Player() {
     });
   };
 
+  // Crear socket solo cuando el jugador se une
   useEffect(() => {
-    // Solo crear el socket al inicio, sin depender de selectedPlayer
+    if (!playerJoined || !selectedPlayer) return;
+
     const newSocket = io(
       import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001'
     );
     setSocket(newSocket);
 
     newSocket.emit('join-player', gameCode);
+    newSocket.emit('select-player', { gameCode, playerName: selectedPlayer });
 
     newSocket.on('game-state', (state) => {
+      console.log('📥 Estado recibido:', { 
+        phase: state.phase, 
+        playersCount: state.players?.length,
+        hasEnvelopes: !!state.envelopes?.length 
+      });
       setGameState(state);
 
       if (state.phase === 'setup') {
+        console.log('✅ Activando fase de sobre');
         setEnvelopePhase(true);
       }
 
       if (state.phase === 'playing' && state.envelopes) {
-        // Buscar mi sobre - solo cuando playerJoined es true
-        if (playerJoined) {
-          const myEnv = state.envelopes.find(
-            (env) => env.holder === selectedPlayer
-          );
-          setMyEnvelope(myEnv);
-        }
+        const myEnv = state.envelopes.find(
+          (env) => env.holder === selectedPlayer
+        );
+        setMyEnvelope(myEnv);
       }
     });
 
     newSocket.on('suspicion-started', (suspicion) => {
       setCurrentSuspicion(suspicion);
-      // Solo responder si ya hemos seleccionado jugador
-      if (playerJoined && suspicion.responder === selectedPlayer) {
+      if (suspicion.responder === selectedPlayer) {
         setSuspicionMode(true);
       }
     });
 
     newSocket.on('cards-revealed', (data) => {
-      // Mostrar las cartas que se revelaron
       console.log('Cartas reveladas:', data);
     });
 
     return () => newSocket.close();
-  }, [gameCode]); // Removido selectedPlayer de las dependencias
+  }, [gameCode, playerJoined, selectedPlayer]);
 
   const handleJoinGame = () => {
-    if (selectedPlayer && socket) {
-      socket.emit('select-player', { gameCode, playerName: selectedPlayer });
+    if (selectedPlayer) {
       setPlayerJoined(true);
     }
   };
@@ -225,6 +228,16 @@ function Player() {
     setShowingCards(false);
     setCardsToShow([]);
   };
+
+  // Debug: ver qué se está renderizando
+  console.log('🎮 Renderizando con:', { 
+    playerJoined, 
+    phase: gameState?.phase,
+    playersCount: gameState?.players?.length,
+    envelopePhase, 
+    envelopeCreated,
+    selectedPlayer 
+  });
 
   // Pantalla de selección de jugador
   if (!playerJoined) {
